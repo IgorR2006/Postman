@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "862096fd-4502-428e-b028-f30eed1c307c",
+		"name": "Scan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28356670"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"   });\r",
+							"  pm.test(\"Если в ответе есть ключ accessToken, то записать его значение в токен\", function () {\r",
+							"        let jsonData = JSON.parse(responseBody);\r",
+							"        pm.expect(jsonData).to.have.property(\"accessToken\");\r",
+							"        pm.collectionVariables.set(\"token\", jsonData.accessToken);\r",
+							"    });\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{test_login}}\",\r\n  \"password\": \"{{test_password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/account/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "получение документов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Запись наименований новостных агентов в переменные news_agent_(1-2)\", function(){\r",
+							"     let jsonData = JSON.parse(responseBody);\r",
+							"       pm.collectionVariables.set(\"news_agent_1\", jsonData[0].ok.source.name);\r",
+							"       pm.collectionVariables.set(\"news_agent_2\", jsonData[1].ok.source.name);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ids\": [\r\n    {{string_1}},\r\n     {{string_2}}\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/documents",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "balace",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Запись текущего баланса в переменную current_balance\", function(){\r",
+							"    let jsonData = JSON.parse(responseBody);\r",
+							"    pm.expect(jsonData).to.have.property('balance');\r",
+							"    pm.collectionVariables.set(\"current_balance\", jsonData.balance)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/account/balance",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "публикации",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"  let jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Запись общего количества публикаций\", function(){\r",
+							"    pm.expect(jsonData).to.have.property('totalCount');\r",
+							"    pm.collectionVariables.set(\"subjects_total\", jsonData.totalCount)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Запись  публикаций\", function() {\r",
+							"    pm.expect(jsonData).to.have.property('subjects');\r",
+							"    pm.collectionVariables.set(\"subjects_name1\", jsonData.subjects[0].name);\r",
+							"    pm.collectionVariables.set(\"subjects_name2\", jsonData.subjects[1].name);\r",
+							"    pm.collectionVariables.set(\"subjects_name3\", jsonData.subjects[2].name)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/entities/subjects?index=0&pageSize=4",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"entities",
+						"subjects"
+					],
+					"query": [
+						{
+							"key": "index",
+							"value": "0"
+						},
+						{
+							"key": "pageSize",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_login",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "current_balance",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_name1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_name2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_name3",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_total",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "news_agent_1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "news_agent_2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "string_1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "string_2",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
