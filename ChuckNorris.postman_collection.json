@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "66ef339e-cfc5-49cc-8063-0b3c9eb5e50f",
+		"name": "ChuckNorris",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28356670"
+	},
+	"item": [
+		{
+			"name": "Получение категорий шуток Чака",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    pm.test(\"Список шуток не пустой\", function () {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        pm.expect(jsonData[0]).to.not.null;\r",
+							"        pm.collectionVariables.set(\"categories\", jsonData)\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}jokes/categories",
+					"host": [
+						"{{base_url}}jokes"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение шуток Чака",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var jsonData = pm.collectionVariables.get(\"categories\");\r",
+							"\r",
+							"var cat = jsonData[Math.floor(Math.random() * jsonData.length)]\r",
+							"\r",
+							"pm.collectionVariables.set(\"category\", cat)\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/jokes/random?category={{category}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"jokes",
+						"random"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "{{category}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение шуток Чака (Негативное)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var fail_cat = pm.collectionVariables.get(\"category\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"fail_category\", fail_cat + 1)\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/jokes/random?category={{fail_category}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"jokes",
+						"random"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "{{fail_category}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://api.chucknorris.io/",
+			"type": "string"
+		},
+		{
+			"key": "categories",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "fail_category",
+			"value": ""
+		}
+	]
+}
